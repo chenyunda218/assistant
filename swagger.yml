@@ -192,3 +192,7 @@ components:
         id:
           type: string
           description: "Session id"
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Action"
