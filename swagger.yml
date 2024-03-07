@@ -1,0 +1,194 @@
+openapi: 3.0.3
+info:
+  title: Assistant APIs
+  description: |-
+    boardware
+  contact:
+    email: chenyunda218@gmail.com
+  version: 0.0.1
+tags:
+  - name: Sessions
+paths:
+  /sessions:
+    put:
+      tags:
+        - Sessions
+      summary: "Create or continue session"
+      operationId: CreateSession
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RunSessionRequest"
+      responses:
+        "200":
+          description: "Session created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+  /sessions/{sessionId}:
+    get:
+      tags:
+        - Sessions
+      summary: "Get session"
+      operationId: GetSession
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "Session id"
+      responses:
+        "200":
+          description: "Session"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+components:
+  schemas:
+    RunSessionRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Session id"
+        input:
+          type: array
+          items:
+            $ref: "#/components/schemas/Input"
+    TextInput:
+      type: object
+      properties:
+        text:
+          type: string
+          description: "Text input"
+        format:
+          type: string
+          example: ["plain", "application/json", "application/xml"]
+          description: "Text format"
+        type:
+          $ref: "#/components/schemas/InputType"
+    AudioInput:
+      type: object
+      properties:
+        url:
+          type: string
+          description: "audio url"
+        base64:
+          type: string
+          format: base64
+          description: "base64 of audio data"
+        type:
+          $ref: "#/components/schemas/InputType"
+    ImageInput:
+      type: object
+      properties:
+        url:
+          type: string
+          description: "image url"
+        base64:
+          type: string
+          format: base64
+          description: "base64 of image data"
+        type:
+          $ref: "#/components/schemas/InputType"
+    VideoInput:
+      type: object
+      properties:
+        url:
+          type: string
+          description: "video url"
+        base64:
+          type: string
+          format: base64
+          description: "base64 of video data"
+        type:
+          $ref: "#/components/schemas/InputType"
+    InputType:
+      type: string
+      enum: [Audio, Video, Image, Text]
+    Input:
+      oneOf:
+        - $ref: "#/components/schemas/AudioInput"
+        - $ref: "#/components/schemas/VideoInput"
+        - $ref: "#/components/schemas/ImageInput"
+        - $ref: "#/components/schemas/TextInput"
+      discriminator:
+        propertyName: type
+    ActionType:
+      type: string
+      enum: [Text, Emotion, DrawPicture]
+    TextAction:
+      type: object
+      properties:
+        text:
+          type: string
+          description: "Text response"
+        format:
+          type: string
+          example: ["plain", "application/json", "application/xml"]
+          description: "Text format"
+        type:
+          $ref: "#/components/schemas/ActionType"
+    DrawPictureAction:
+      type: object
+      properties:
+        url:
+          type: string
+          description: "image url"
+        base64:
+          type: string
+          format: base64
+          description: "base64 of image data"
+        type:
+          $ref: "#/components/schemas/ActionType"
+    PlayAudioAction:
+      type: object
+      properties:
+        url:
+          type: string
+          description: "audio url"
+        base64:
+          type: string
+          format: base64
+          description: "base64 of audio data"
+        type:
+          $ref: "#/components/schemas/ActionType"
+    PlayVideoAction:
+      type: object
+      properties:
+        url:
+          type: string
+          description: "video url"
+        base64:
+          type: string
+          format: base64
+          description: "base64 of video data"
+        type:
+          $ref: "#/components/schemas/ActionType"
+    EmotionAction:
+      type: object
+      properties:
+        emtion:
+          type: string
+          description: "Emotion"
+        type:
+          $ref: "#/components/schemas/ActionType"
+    Action:
+      oneOf:
+        - $ref: "#/components/schemas/TextAction"
+        - $ref: "#/components/schemas/DrawPictureAction"
+        - $ref: "#/components/schemas/PlayAudioAction"
+        - $ref: "#/components/schemas/EmotionAction"
+        - $ref: "#/components/schemas/PlayVideoAction"
+      discriminator:
+        propertyName: type
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Session id"
